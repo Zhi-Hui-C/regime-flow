@@ -34,7 +34,8 @@ class RegimeDetector:
         Fit the HMM model to the features.
         
         Args:
-            features: Feature matrix (n_samples, n_features).
+            features: Feature matrix (n_samples, n_features). First column should contain
+                     returns for proper regime labeling (Bull/Bear assignment).
             n_iter: Maximum number of iterations for training.
             
         Returns:
@@ -120,7 +121,8 @@ class RegimeDetector:
         Compute statistics for each detected regime.
         
         Args:
-            features: Feature matrix (n_samples, n_features).
+            features: Feature matrix (n_samples, n_features). Expected to have returns in
+                     column 0 and volatility in column 1 (if available).
             dates: Optional datetime index for the features.
             
         Returns:

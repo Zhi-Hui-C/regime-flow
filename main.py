@@ -3,7 +3,9 @@
 import numpy as np
 import pandas as pd
 import warnings
-warnings.filterwarnings('ignore')
+# Filter specific warnings to avoid hiding important issues
+warnings.filterwarnings('ignore', category=DeprecationWarning)
+warnings.filterwarnings('ignore', category=FutureWarning)
 
 from src.data.loader import DataLoader
 from src.models.hmm import RegimeDetector
