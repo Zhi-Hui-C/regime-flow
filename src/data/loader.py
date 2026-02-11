@@ -36,26 +36,28 @@ class DataLoader:
     def fetch_data(self) -> pd.DataFrame:
         """
         Fetch stock data from Yahoo Finance.
-        
-        Returns:
-            DataFrame with OHLCV data.
         """
         print(f"Fetching {self.ticker} data from {self.start_date} to {self.end_date}...")
-        self.data = yf.download(self.ticker, start=self.start_date, end=self.end_date, progress=False)
+            
+        # ADDED: auto_adjust=True ensures we get clean data
+        self.data = yf.download(self.ticker, start=self.start_date, end=self.end_date, progress=False, auto_adjust=True)
+            
+        # ADDED: If yfinance gives us a MultiIndex (e.g. Price, Ticker), flatten it
+        if isinstance(self.data.columns, pd.MultiIndex):
+            self.data.columns = self.data.columns.get_level_values(0)
+
         print(f"Fetched {len(self.data)} records.")
-        return self.data
+        return self.data    
     
     def calculate_log_returns(self) -> pd.Series:
         """
-        Calculate log returns from adjusted close prices.
-        
-        Returns:
-            Series of log returns.
+        Calculate log returns from close prices.
         """
         if self.data is None:
             self.fetch_data()
         
-        log_returns = np.log(self.data['Adj Close'] / self.data['Adj Close'].shift(1))
+        # CHANGED: 'Adj Close' -> 'Close'
+        log_returns = np.log(self.data['Close'] / self.data['Close'].shift(1))
         return log_returns.dropna()
     
     def calculate_volatility(self, window: int = 20) -> pd.Series:
